@@ -58,7 +58,7 @@ class LoadImageFromFile:
 
         # Handle DICOM files
         if filename.split(".")[-1] == "dcm":
-            from alveolus_ai import dicom_dataset_to_dict
+            from alveolus_ai.dicom import dicom_dataset_to_dict
 
             _, img = dicom_dataset_to_dict(filename, "fetch_both_values")
             img = np.tile(img[:,:,np.newaxis], (1, 1, 3))
