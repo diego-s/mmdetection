@@ -56,8 +56,17 @@ class LoadImageFromFile:
         else:
             filename = results['img_info']['filename']
 
-        img_bytes = self.file_client.get(filename)
-        img = mmcv.imfrombytes(img_bytes, flag=self.color_type)
+        # Handle DICOM files
+        if filename.split(".")[-1] == "dcm":
+            from alveolus_ai import dicom_dataset_to_dict
+
+            _, img = dicom_dataset_to_dict(filename, "fetch_both_values")
+            img = np.tile(img[:,:,np.newaxis], (1, 1, 3))
+        # Handle other formats
+        else:
+            img_bytes = self.file_client.get(filename)
+            img = mmcv.imfrombytes(img_bytes, flag=self.color_type)
+            
         if self.to_float32:
             img = img.astype(np.float32)
 
